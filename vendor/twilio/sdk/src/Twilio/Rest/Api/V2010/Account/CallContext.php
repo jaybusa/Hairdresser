@@ -13,10 +13,13 @@ use Twilio\Exceptions\TwilioException;
 use Twilio\InstanceContext;
 use Twilio\ListResource;
 use Twilio\Options;
+use Twilio\Rest\Api\V2010\Account\Call\EventList;
 use Twilio\Rest\Api\V2010\Account\Call\FeedbackList;
 use Twilio\Rest\Api\V2010\Account\Call\NotificationList;
 use Twilio\Rest\Api\V2010\Account\Call\PaymentList;
 use Twilio\Rest\Api\V2010\Account\Call\RecordingList;
+use Twilio\Rest\Api\V2010\Account\Call\SiprecList;
+use Twilio\Rest\Api\V2010\Account\Call\StreamList;
 use Twilio\Values;
 use Twilio\Version;
 
@@ -24,17 +27,25 @@ use Twilio\Version;
  * @property RecordingList $recordings
  * @property NotificationList $notifications
  * @property FeedbackList $feedback
+ * @property EventList $events
  * @property PaymentList $payments
+ * @property SiprecList $siprec
+ * @property StreamList $streams
  * @method \Twilio\Rest\Api\V2010\Account\Call\RecordingContext recordings(string $sid)
  * @method \Twilio\Rest\Api\V2010\Account\Call\NotificationContext notifications(string $sid)
  * @method \Twilio\Rest\Api\V2010\Account\Call\FeedbackContext feedback()
  * @method \Twilio\Rest\Api\V2010\Account\Call\PaymentContext payments(string $sid)
+ * @method \Twilio\Rest\Api\V2010\Account\Call\SiprecContext siprec(string $sid)
+ * @method \Twilio\Rest\Api\V2010\Account\Call\StreamContext streams(string $sid)
  */
 class CallContext extends InstanceContext {
     protected $_recordings;
     protected $_notifications;
     protected $_feedback;
+    protected $_events;
     protected $_payments;
+    protected $_siprec;
+    protected $_streams;
 
     /**
      * Initialize the CallContext
@@ -99,6 +110,7 @@ class CallContext extends InstanceContext {
             'StatusCallback' => $options['statusCallback'],
             'StatusCallbackMethod' => $options['statusCallbackMethod'],
             'Twiml' => $options['twiml'],
+            'TimeLimit' => $options['timeLimit'],
         ]);
 
         $payload = $this->version->update('POST', $this->uri, [], $data);
@@ -157,6 +169,21 @@ class CallContext extends InstanceContext {
     }
 
     /**
+     * Access the events
+     */
+    protected function getEvents(): EventList {
+        if (!$this->_events) {
+            $this->_events = new EventList(
+                $this->version,
+                $this->solution['accountSid'],
+                $this->solution['sid']
+            );
+        }
+
+        return $this->_events;
+    }
+
+    /**
      * Access the payments
      */
     protected function getPayments(): PaymentList {
@@ -169,6 +196,36 @@ class CallContext extends InstanceContext {
         }
 
         return $this->_payments;
+    }
+
+    /**
+     * Access the siprec
+     */
+    protected function getSiprec(): SiprecList {
+        if (!$this->_siprec) {
+            $this->_siprec = new SiprecList(
+                $this->version,
+                $this->solution['accountSid'],
+                $this->solution['sid']
+            );
+        }
+
+        return $this->_siprec;
+    }
+
+    /**
+     * Access the streams
+     */
+    protected function getStreams(): StreamList {
+        if (!$this->_streams) {
+            $this->_streams = new StreamList(
+                $this->version,
+                $this->solution['accountSid'],
+                $this->solution['sid']
+            );
+        }
+
+        return $this->_streams;
     }
 
     /**

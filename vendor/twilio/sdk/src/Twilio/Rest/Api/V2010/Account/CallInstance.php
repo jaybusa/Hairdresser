@@ -13,10 +13,13 @@ use Twilio\Deserialize;
 use Twilio\Exceptions\TwilioException;
 use Twilio\InstanceResource;
 use Twilio\Options;
+use Twilio\Rest\Api\V2010\Account\Call\EventList;
 use Twilio\Rest\Api\V2010\Account\Call\FeedbackList;
 use Twilio\Rest\Api\V2010\Account\Call\NotificationList;
 use Twilio\Rest\Api\V2010\Account\Call\PaymentList;
 use Twilio\Rest\Api\V2010\Account\Call\RecordingList;
+use Twilio\Rest\Api\V2010\Account\Call\SiprecList;
+use Twilio\Rest\Api\V2010\Account\Call\StreamList;
 use Twilio\Values;
 use Twilio\Version;
 
@@ -39,7 +42,6 @@ use Twilio\Version;
  * @property string $priceUnit
  * @property string $direction
  * @property string $answeredBy
- * @property string $annotation
  * @property string $apiVersion
  * @property string $forwardedFrom
  * @property string $groupSid
@@ -53,7 +55,10 @@ class CallInstance extends InstanceResource {
     protected $_recordings;
     protected $_notifications;
     protected $_feedback;
+    protected $_events;
     protected $_payments;
+    protected $_siprec;
+    protected $_streams;
 
     /**
      * Initialize the CallInstance
@@ -86,7 +91,6 @@ class CallInstance extends InstanceResource {
             'priceUnit' => Values::array_get($payload, 'price_unit'),
             'direction' => Values::array_get($payload, 'direction'),
             'answeredBy' => Values::array_get($payload, 'answered_by'),
-            'annotation' => Values::array_get($payload, 'annotation'),
             'apiVersion' => Values::array_get($payload, 'api_version'),
             'forwardedFrom' => Values::array_get($payload, 'forwarded_from'),
             'groupSid' => Values::array_get($payload, 'group_sid'),
@@ -171,10 +175,31 @@ class CallInstance extends InstanceResource {
     }
 
     /**
+     * Access the events
+     */
+    protected function getEvents(): EventList {
+        return $this->proxy()->events;
+    }
+
+    /**
      * Access the payments
      */
     protected function getPayments(): PaymentList {
         return $this->proxy()->payments;
+    }
+
+    /**
+     * Access the siprec
+     */
+    protected function getSiprec(): SiprecList {
+        return $this->proxy()->siprec;
+    }
+
+    /**
+     * Access the streams
+     */
+    protected function getStreams(): StreamList {
+        return $this->proxy()->streams;
     }
 
     /**

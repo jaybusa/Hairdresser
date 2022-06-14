@@ -5,7 +5,7 @@ namespace Illuminate\Foundation\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use Session;
+
 trait AuthenticatesUsers
 {
     use RedirectsUsers, ThrottlesLogins;
@@ -91,7 +91,7 @@ trait AuthenticatesUsers
      */
     protected function credentials(Request $request)
     {
-        return $request->only($this->username(), 'password','role_id');
+        return $request->only($this->username(), 'password');
     }
 
     /**
@@ -133,7 +133,7 @@ trait AuthenticatesUsers
     protected function sendFailedLoginResponse(Request $request)
     {
         throw ValidationException::withMessages([
-            $this->username() => [trans('messages.login_failed')],
+            $this->username() => [trans('auth.failed')],
         ]);
     }
 
@@ -156,19 +156,12 @@ trait AuthenticatesUsers
     public function logout(Request $request)
     {
         $this->guard()->logout();
-        if(Session::has('locale')) {
-            $locale = Session::get('locale');
-        } else {
-            $locale = 'en';
-        }
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
-        Session::put('locale',$locale);
-        return redirect()->route('login')->with(['success'=>__('messages.logout')]);
-        //echo 'here';exit;
-        return $this->loggedOut($request) ?: redirect('/admin');
+
+        return $this->loggedOut($request) ?: redirect('/');
     }
 
     /**
@@ -180,8 +173,6 @@ trait AuthenticatesUsers
     protected function loggedOut(Request $request)
     {
         //
-                //Session()->put('success','Logout successfully.');
-
     }
 
     /**
