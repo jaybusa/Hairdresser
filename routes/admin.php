@@ -37,6 +37,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::post('delete_promocode', 'PromocodeController@delete_promocode')->name('delete_promocode');
 	Route::post('check-promocode','PromocodeController@check_promocode')->name('check_promocode');
 
+	Route::get('/downloadPDF','ReportController@downloadPDF');
 
 	Route::get('report', 'ReportController@index')->name('report');
 	Route::post('report', 'ReportController@index')->name('report');

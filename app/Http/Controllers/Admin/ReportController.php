@@ -14,6 +14,7 @@ use DB;
 use Carbon\Carbon;
 use App\Utils;
 use Illuminate\Support\Str;
+use PDF;
 
 
 
@@ -60,6 +61,15 @@ class ReportController extends Controller {
      public function amount_report(Request $request) {
         $Dressers = User::where('role_id','3')->get();
         return view('admin.report.amount_report',['Dressers'=>$Dressers]);
+    }
+    
+     public function downloadPDF(Request $request) {
+        $Dressers = User::where('role_id','3')->get();
+        $pdf = PDF::loadView('admin.report.pdf', compact('Dressers'));
+        
+        return $pdf->download('report.pdf');
+
+        // return view('admin.report.pdf',['Dressers'=>$Dressers]);
     }
 
     
